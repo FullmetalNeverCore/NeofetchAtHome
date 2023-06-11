@@ -3,7 +3,15 @@ import os
 import platform
 import subprocess
 import psutil
-import pyautogui
+if platform.system() == 'Windows':
+    import pyautogui
+
+    # Your Windows-specific code here
+
+elif platform.system() == 'Linux':
+    # Your Linux-specific code here
+
+    pass
 import cpuinfo
 import datetime
 
