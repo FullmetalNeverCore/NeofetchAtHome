@@ -40,9 +40,12 @@ class HardwareStat:
         
     def screen_size(self):
         try:
-            return subprocess.check_output(["xrandr | grep \'*\'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8')
+            try:
+                return subprocess.check_output(["xrandr | grep \'*\'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8')
+            except Exception:
+                return f'{pyautogui.size().width}x{pyautogui.size().height}'
         except Exception:
-            return f'{pyautogui.size().width}x{pyautogui.size().height}'
+            print("No display was found")
         
     def os(self):
         try:
