@@ -35,7 +35,7 @@ class HardwareStat:
     def get_uptime(self):
         try:
             try:
-                return subprocess.check_output(["uptime -p"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8')
+                return subprocess.check_output(["uptime -p"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8') if not platform.system() == "Linux" else subprocess.check_output(["uptime -p"],shell=True).decode('utf-8')
             except Exception:
                 return subprocess.check_output(["systeminfo | find 'System Boot Time'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT)
         except Exception:
@@ -72,26 +72,16 @@ class HardwareStat:
     
     def template(self):
         return f"""
-                                ..,   {self.host()}
-                    ....,,:;+ccllll   --------------------
-      ...,,+:;  cllllllllllllllllll   OS: {self.os()[0]}
-,cclllllllllll  lllllllllllllllllll   Kernel: {self.os()[1]}
-llllllllllllll  lllllllllllllllllll   Uptime: {self.get_uptime()}
-llllllllllllll  lllllllllllllllllll   
-llllllllllllll  lllllllllllllllllll   Resolution: {self.screen_size()}
-llllllllllllll  lllllllllllllllllll   CPU: {self.cpu()}
-llllllllllllll  lllllllllllllllllll   Memory: {self.ram()}
-                                      
-llllllllllllll  lllllllllllllllllll   
-llllllllllllll  lllllllllllllllllll  
-llllllllllllll  lllllllllllllllllll   
-llllllllllllll  lllllllllllllllllll   
-llllllllllllll  lllllllllllllllllll   
-`'ccllllllllll  lllllllllllllllllll
-       `' \*::  :ccllllllllllllllll
-                       ````''*::cll        
-        
-        
+                                        {self.host()}
+                                    --------------------
+                                    OS: {self.os()[0]}
+                                    Kernel: {self.os()[1]}
+                                    Uptime: {self.get_uptime()}
+                                    
+                                    Resolution: {self.screen_size()}
+                                    CPU: {self.cpu()}
+                                    Memory: {self.ram()}
+                 
         """
 
 if __name__ == "__main__":
