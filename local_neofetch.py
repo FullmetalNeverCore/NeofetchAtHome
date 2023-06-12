@@ -33,13 +33,13 @@ class HardwareStat:
         except Exception:
             return None
     def get_uptime(self):
-        try:
             try:
                 return subprocess.check_output(["uptime -p"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8') if not platform.system() == "Linux" else subprocess.check_output(["uptime -p"],shell=True).decode('utf-8')
             except Exception:
-                return subprocess.check_output(["systeminfo | find 'System Boot Time'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT)
-        except Exception:
-            return "No uptime avab."
+                try:
+                    return subprocess.check_output(["systeminfo | find 'System Boot Time'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT)
+                except Exception:
+                    return "No uptime avab."
     def get_kernel(self):
         try:
             return platform.relese()
@@ -47,13 +47,15 @@ class HardwareStat:
             return None
         
     def screen_size(self):
-        try:
             try:
-                return subprocess.check_output(["xrandr | grep \'*\'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8')
-            except Exception:
-                return f'{pyautogui.size().width}x{pyautogui.size().height}'
-        except Exception:
-            print("No display was found")
+                return subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] if not platform.system() == "Linux" else subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] 
+            except Exception as e:
+                print(e)
+                try:
+                    print('here')
+                    return f'{pyautogui.size().width}x{pyautogui.size().height}'
+                except Exception:
+                    print("No display was found")
         
     def os(self):
         try:
