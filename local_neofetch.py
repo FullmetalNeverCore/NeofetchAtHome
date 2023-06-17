@@ -55,7 +55,7 @@ class HardwareStat:
                     print('here')
                     return f'{pyautogui.size().width}x{pyautogui.size().height}'
                 except Exception:
-                    print("No display was found")
+                    return "No display was found"
         
     def os(self):
         try:
