@@ -6,10 +6,9 @@ import psutil
 if platform.system() == 'Windows':
     import pyautogui
 
-    # Your Windows-specific code here
 
 elif platform.system() == 'Linux':
-    # Your Linux-specific code here
+
 
     pass
 import cpuinfo
@@ -37,7 +36,8 @@ class HardwareStat:
                 return subprocess.check_output(["uptime -p"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8') if not platform.system() == "Linux" else subprocess.check_output(["uptime -p"],shell=True).decode('utf-8')
             except Exception:
                 try:
-                    return subprocess.check_output(["systeminfo | find 'System Boot Time'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT)
+                    getcuruptime = datetime.datetime.now() - datetime.datetime.strptime(str(subprocess.check_output('net statistics workstation | find "Statistics since"',shell=True)).split("b'Statistics since")[1].replace("PM\\r\\n","").replace("'","")[1:-1],"%m/%d/%Y %H:%M:%S")
+                    return f'Weeks: {getcuruptime.days // 7} Days:{getcuruptime.days % 7} Hours: {getcuruptime.seconds //3600}'
                 except Exception:
                     return "No uptime avab."
     def get_kernel(self):
@@ -59,9 +59,13 @@ class HardwareStat:
         
     def os(self):
         try:
-            return [f'{platform.system()}',f'{platform.release()}']
-        except Exception:
-            return None
+            if platform.system() == "Linux":
+                return [f'{platform.system()}',f'{platform.release()}']
+            else:
+                return [platform.system(),str(subprocess.check_output('systeminfo | find "OS Name"',shell=True)).split(":")[1].replace("\\r\\n","").replace(" ","")]
+        except Exception as e:
+            print(e)
+            return [None,None]
     
     def cpu(self):
         try:
