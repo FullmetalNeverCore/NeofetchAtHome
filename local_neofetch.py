@@ -76,7 +76,10 @@ class HardwareStat:
     def sys_man(self):
         try:
             if platform.system() == "Linux":
-                return subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True).decode()
+                try:
+                    return subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True).decode()
+                except Exception as e:
+                    return subprocess.check_output('cat /proc/cpuinfo | grep Model',shell=True).decode()
             else:
                 return subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")[1]
         except Exception as e:
