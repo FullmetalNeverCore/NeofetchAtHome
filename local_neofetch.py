@@ -78,7 +78,7 @@ class HardwareStat:
             if platform.system() == "Linux":
                 return str(subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True))
             else:
-                return subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")[1]
+                return  subprocess.check_output('wmic csproduct get vendor',shell=True).decode().replace("Vendor","").replace("\r\r\n","")
         except Exception as e:
             print("ERR")
             print(e)
