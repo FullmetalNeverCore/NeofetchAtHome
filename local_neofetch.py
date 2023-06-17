@@ -72,6 +72,17 @@ class HardwareStat:
             return cpuinfo.get_cpu_info()['brand_raw']
         except:
             return None
+        
+    def sys_man(self):
+        try:
+            if platform.system() == "Linux":
+                return str(subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True))
+            else:
+                return subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")[1]
+        except Exception as e:
+            print("ERR")
+            print(e)
+            return None 
     
     def ram(self):
         return f'{(str(psutil.virtual_memory().used / (1024 * 1024)))[0:5]}MiB / {(str(psutil.virtual_memory().total / (1024 * 1024)))[0:5]}MiB'
@@ -83,6 +94,7 @@ class HardwareStat:
                                     OS: {self.os()[0]}
                                     Kernel: {self.os()[1]}
                                     Uptime: {self.get_uptime()}
+                                    System Manufacturer: {self.sys_man()}
                                     
                                     Resolution: {self.screen_size()}
                                     CPU: {self.cpu()}
@@ -92,4 +104,3 @@ class HardwareStat:
 
 if __name__ == "__main__":
     print(HardwareStat().template())
-
