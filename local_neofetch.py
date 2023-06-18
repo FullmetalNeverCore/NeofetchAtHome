@@ -64,6 +64,8 @@ class HardwareStat:
                 return [platform.system(),str(subprocess.check_output('systeminfo | find "OS Name"',shell=True)).split(":")[1].replace("\\r\\n","").replace(" ","")]
         except Exception as e:
             print(e)
+            if platform.system() == "Windows":
+                return [f'{platform.system()}',f'None']
             return [None,None]
     
     def cpu(self):
