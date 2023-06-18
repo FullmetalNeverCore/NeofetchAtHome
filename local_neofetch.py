@@ -48,9 +48,8 @@ class HardwareStat:
         
     def screen_size(self):
             try:
-                return subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] if not platform.system() == "Linux" else subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] 
+                return subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] if not platform.system() == "Linux" else subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] 
             except Exception as e:
-                print(e)
                 try:
                     return f'{pyautogui.size().width}x{pyautogui.size().height}'
                 except Exception:
