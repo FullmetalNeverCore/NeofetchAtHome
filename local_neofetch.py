@@ -52,10 +52,9 @@ class HardwareStat:
             except Exception as e:
                 print(e)
                 try:
-                    print('here')
                     return f'{pyautogui.size().width}x{pyautogui.size().height}'
                 except Exception:
-                    print("No display was found")
+                    return "No display was found"
         
     def os(self):
         try:
@@ -76,17 +75,29 @@ class HardwareStat:
     def sys_man(self):
         try:
             if platform.system() == "Linux":
-                return str(subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True)).decode()
+                try:
+                    return subprocess.check_output('cat /sys/class/dmi/id/sys_vendor',shell=True).decode()
+                except Exception as e:
+                    return subprocess.check_output('cat /proc/cpuinfo | grep Model',shell=True).decode()
             else:
-                return  subprocess.check_output('wmic csproduct get vendor',shell=True).decode().replace("Vendor","").replace("\r\r\n","")
+                return "".join([x for x in list(subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")) if x.isalnum()])
         except Exception as e:
-            print("ERR")
-            print(e)
             return None 
     
     def ram(self):
         return f'{(str(psutil.virtual_memory().used / (1024 * 1024)))[0:5]}MiB / {(str(psutil.virtual_memory().total / (1024 * 1024)))[0:5]}MiB'
     
+    def net(self):
+        try:
+            if not platform.system() == "Linux":
+                return subprocess.check_output('ipconfig | findstr IPv4',shell=True).decode().strip()
+            else:
+                return subprocess.check_output('ip -4 addr show | grep inet',shell=True).decode().strip()
+        except Exception:
+            return None
+
+
+
     def template(self):
         return f"""
                                         {self.host()}
@@ -95,7 +106,8 @@ class HardwareStat:
                                     Kernel: {self.os()[1]}
                                     Uptime: {self.get_uptime()}
                                     System Manufacturer: {self.sys_man()}
-                                    
+                                    Netowork Info: 
+                                            {self.net()}
                                     Resolution: {self.screen_size()}
                                     CPU: {self.cpu()}
                                     Memory: {self.ram()}
