@@ -48,12 +48,14 @@ class HardwareStat:
         
     def screen_size(self):
             try:
-                return subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] if not platform.system() == "Linux" else subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] 
+                return subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stdout=open(os.devnull, 'w'),stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] if not platform.system() == "Linux" else subprocess.check_output(["hwinfo --monitor | grep 'Resolution:'"],shell=True,stderr=subprocess.STDOUT).decode('utf-8').split('Resolution: ')[1] 
             except Exception as e:
+                print(e)
                 try:
+                    print('here')
                     return f'{pyautogui.size().width}x{pyautogui.size().height}'
                 except Exception:
-                    return "No display was found"
+                    print("No display was found")
         
     def os(self):
         try:
@@ -63,6 +65,8 @@ class HardwareStat:
                 return [platform.system(),str(subprocess.check_output('systeminfo | find "OS Name"',shell=True)).split(":")[1].replace("\\r\\n","").replace(" ","")]
         except Exception as e:
             print(e)
+            if platform.system() == "Windows":
+                return [f'{platform.system()}',f'None']
             return [None,None]
     
     def cpu(self):
@@ -79,8 +83,10 @@ class HardwareStat:
                 except Exception as e:
                     return subprocess.check_output('cat /proc/cpuinfo | grep Model',shell=True).decode()
             else:
-                return "".join([x for x in list(subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")) if x.isalnum()])
+                return subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")[1]
         except Exception as e:
+            print("ERR")
+            print(e)
             return None 
     
     def ram(self):
