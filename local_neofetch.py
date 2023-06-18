@@ -52,10 +52,9 @@ class HardwareStat:
             except Exception as e:
                 print(e)
                 try:
-                    print('here')
                     return f'{pyautogui.size().width}x{pyautogui.size().height}'
                 except Exception:
-                    print("No display was found")
+                    return "No display was found"
         
     def os(self):
         try:
@@ -65,8 +64,6 @@ class HardwareStat:
                 return [platform.system(),str(subprocess.check_output('systeminfo | find "OS Name"',shell=True)).split(":")[1].replace("\\r\\n","").replace(" ","")]
         except Exception as e:
             print(e)
-            if platform.system() == "Windows":
-                return [f'{platform.system()}',f'None']
             return [None,None]
     
     def cpu(self):
@@ -83,10 +80,8 @@ class HardwareStat:
                 except Exception as e:
                     return subprocess.check_output('cat /proc/cpuinfo | grep Model',shell=True).decode()
             else:
-                return subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")[1]
+                return "".join([x for x in list(subprocess.check_output('wmic csproduct get vendor',shell=True).decode().strip().replace("Vendor","")) if x.isalnum()])
         except Exception as e:
-            print("ERR")
-            print(e)
             return None 
     
     def ram(self):
